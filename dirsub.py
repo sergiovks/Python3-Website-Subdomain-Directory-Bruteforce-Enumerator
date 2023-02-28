@@ -6,16 +6,36 @@ from urllib.parse import urlparse
 
 parser = argparse.ArgumentParser(description='Directory/Subdomain enumeration on a website')
 parser.add_argument('-w', '--wordlist', metavar='', required=True, help='Path to the wordlist to use')
-parser.add_argument('-t', '--threads', metavar='', type=int, default=10, choices=range(1, 1000), help='Number of threads to use (default: 10)')
+parser.add_argument('-t', '--threads', metavar='', type=int, default=10, choices=range(1, 1001), help='Number of threads to use (default: 10)')
 parser.add_argument('-s', '--subdomains', action='store_true', help='Enable subdomain enumeration mode')
 parser.add_argument('-d', '--directories', action='store_true', help='Enable directory enumeration mode (default)')
 parser.add_argument('-f', '--add-slash', action='store_true', help='Add a slash at the end of directory paths')
-parser.add_argument('url', metavar='', help='URL of the website to enumerate')
+parser.add_argument('-u', '--url', metavar='', required=True, help='URL of the website to scan')
+parser.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS, help='Show this help message and exit')
 args = parser.parse_args()
 
+def display_help():
+    print("Usage: python3 dirsub.py [OPTIONS]\n")
+    print("Options:")
+    print("  -w, --wordlist <PATH>  Path to the wordlist to use")
+    print("  -t, --threads <INT>    Number of threads to use (default: 10)")
+    print("  -s, --subdomains       Enable subdomain enumeration mode")
+    print("  -d, --directories      Enable directory enumeration mode (default)")
+    print("  -f, --add-slash        Add a slash at the end of directory paths")
+    print("  -u, --url <URL>        URL of the website to scan")
+    print("  -h, --help             Show this help message and exit")
+    exit()
+
+if not args.wordlist or not args.url:
+    display_help()
+
 wordlist = open(args.wordlist, 'r')
-url = args.url
+url = args.url.strip()
 num_threads = args.threads
+
+if not wordlist:
+    print(colored("Error: The wordlist file is empty!", 'magenta'))
+    exit()
 
 if args.subdomains:
     target = urlparse(url).netloc
