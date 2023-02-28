@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 
 parser = argparse.ArgumentParser(description='Directory/Subdomain enumeration on a website')
 parser.add_argument('-w', '--wordlist', metavar='', required=True, help='Path to the wordlist to use')
-parser.add_argument('-t', '--threads', metavar='', type=int, default=10, choices=range(1, 1001), help='Number of threads to use (default: 10)')
+parser.add_argument('-t', '--threads', metavar='', type=int, default=10, choices=range(1, 1000), help='Number of threads to use (default: 10)')
 parser.add_argument('-s', '--subdomains', action='store_true', help='Enable subdomain enumeration mode')
 parser.add_argument('-d', '--directories', action='store_true', help='Enable directory enumeration mode (default)')
 parser.add_argument('-f', '--add-slash', action='store_true', help='Add a slash at the end of directory paths')
