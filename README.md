@@ -10,4 +10,5 @@ Python3 script that uses a given wordlist for doing subdomain enumeration or dir
 -d or --directories #enable directories enumeration mode (default) (you can only use either or -d or -s but never both)
 -f or --add-slash #to add a slash at the end of directory paths
 -u or --url #give the URL to scan
+-h or --help #display the help menu
 ```
