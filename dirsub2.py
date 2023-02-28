@@ -42,6 +42,8 @@ if args.subdomains:
     subdomains = [f"{sub}.{target}" for sub in wordlist.read().split()]
     wordlist.close()
     wordlist = subdomains
+    pbar.update(1)  # increment progress bar by 1
+
 else:
     wordlist = wordlist.read().split()
 
