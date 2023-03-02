@@ -3,6 +3,7 @@ import requests
 from termcolor import colored
 from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlparse
+from tqdm import tqdm
 
 parser = argparse.ArgumentParser(description='Directory/Subdomain enumeration on a website')
 parser.add_argument('-w', '--wordlist', metavar='', required=True, help='Path to the wordlist to use')
