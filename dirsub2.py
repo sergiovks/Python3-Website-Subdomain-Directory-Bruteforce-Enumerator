@@ -69,7 +69,7 @@ def scan_path(path):
         path = path.strip()
     full_url = url + "/" + path
     try:
-        response = requests.get(full_url)
+        response = requests.get(full_url, timeout 10)
         status_code = response.status_code
         if status_code >= 200 and status_code < 300:
             print(colored(full_url + " [{}]".format(status_code), 'green'))
