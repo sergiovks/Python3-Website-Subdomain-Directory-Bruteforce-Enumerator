@@ -4,6 +4,7 @@ from termcolor import colored
 from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlparse
 from tqdm import tqdm
+import sys
 
 parser = argparse.ArgumentParser(description='Directory/Subdomain enumeration on a website')
 parser.add_argument('-w', '--wordlist', metavar='', required=True, help='Path to the wordlist to use')
@@ -27,11 +28,29 @@ def display_help():
     print("  -h, --help             Show this help message and exit")
     exit()
 
+def validate_url(url):
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except ValueError:
+        return False
+
+def read_wordlist(file_path):
+    try:
+        with open(file_path, 'r') as wordlist_file:
+            return wordlist_file.read().split()
+    except IOError:
+        print(colored(f"Error: Failed to read wordlist file: {file_path}", 'magenta'))
+        exit()
+
 if not args.wordlist or not args.url:
     display_help()
 
-wordlist = open(args.wordlist, 'r')
-url = args.url.strip()
+if not validate_url(args.url):
+    print(colored(f"Error: Invalid URL: {args.url}", 'magenta'))
+    exit()
+
+wordlist = read_wordlist(args.wordlist)
 num_threads = args.threads
 
 if not wordlist:
@@ -39,17 +58,9 @@ if not wordlist:
     exit()
 
 if args.subdomains:
-    target = urlparse(url).netloc
-    with open(args.wordlist, 'r') as wordlist_file:
-        subdomains = [f"{sub}.{target}" for sub in wordlist_file.read().split()]
+    target = urlparse(args.url).netloc
+    subdomains = [f"{sub}.{target}" for sub in wordlist]
     wordlist = subdomains
-else:
-    with open(args.wordlist, 'r') as wordlist_file:
-        wordlist = wordlist_file.read().split()
-
-if not wordlist:
-    print(colored("Error: The wordlist file is empty!", 'magenta'))
-    exit()
 
 def scan_path(path):
     if args.add_slash:
