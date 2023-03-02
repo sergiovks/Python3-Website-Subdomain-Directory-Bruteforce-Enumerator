@@ -26,7 +26,7 @@ def display_help():
     print("  -f, --add-slash        Add a slash at the end of directory paths")
     print("  -u, --url <URL>        URL of the website to scan")
     print("  -h, --help             Show this help message and exit")
-    exit()
+    sys.exit()
 
 def validate_url(url):
     try:
@@ -41,21 +41,21 @@ def read_wordlist(file_path):
             return wordlist_file.read().split()
     except IOError:
         print(colored(f"Error: Failed to read wordlist file: {file_path}", 'magenta'))
-        exit()
+        sys.exit()
 
 if not args.wordlist or not args.url:
     display_help()
 
 if not validate_url(args.url):
     print(colored(f"Error: Invalid URL: {args.url}", 'magenta'))
-    exit()
+    sys.exit()
 
 wordlist = read_wordlist(args.wordlist)
 num_threads = args.threads
 
 if not wordlist:
     print(colored("Error: The wordlist file is empty!", 'magenta'))
-    exit()
+    sys.exit()
 
 if args.subdomains:
     target = urlparse(args.url).netloc
@@ -95,4 +95,4 @@ with ThreadPoolExecutor(max_workers=num_threads) as executor:
         future.result()
     pbar.close()
 
-wordlist.close()
+file.close()
