@@ -39,13 +39,16 @@ if not wordlist:
 
 if args.subdomains:
     target = urlparse(url).netloc
-    subdomains = [f"{sub}.{target}" for sub in wordlist.read().split()]
-    wordlist.close()
+    with open(args.wordlist, 'r') as wordlist_file:
+        subdomains = [f"{sub}.{target}" for sub in wordlist_file.read().split()]
     wordlist = subdomains
-    pbar.update(1)  # increment progress bar by 1
-
 else:
-    wordlist = wordlist.read().split()
+    with open(args.wordlist, 'r') as wordlist_file:
+        wordlist = wordlist_file.read().split()
+
+if not wordlist:
+    print(colored("Error: The wordlist file is empty!", 'magenta'))
+    exit()
 
 def scan_path(path):
     if args.add_slash:
