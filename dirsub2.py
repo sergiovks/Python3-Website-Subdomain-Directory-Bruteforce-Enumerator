@@ -69,7 +69,7 @@ def scan_path(path):
         path = path.strip()
     full_url = url + "/" + path
     try:
-        response = requests.get(full_url, timeout 10)
+        response = requests.get(full_url, timeout 5)
         status_code = response.status_code
         if status_code >= 200 and status_code < 300:
             print(colored(full_url + " [{}]".format(status_code), 'green'))
@@ -79,9 +79,11 @@ def scan_path(path):
             print(colored(full_url + " [{}]".format(status_code), 'red'))
         elif status_code >= 500:
             print(colored(full_url + " [{}]".format(status_code), 'yellow'))
+    except requests.exceptions.Timeout:
+        print(colored(full_url + " [Error]: Connection timeout", 'magenta'))
     except requests.exceptions.RequestException as e:
         print(colored(full_url + " [Error]: {}".format(e), 'magenta'))
-    pbar.update(1)  # increment progress bar by 1
+    pbar.update(1)
 
 with ThreadPoolExecutor(max_workers=num_threads) as executor:
     futures = []
