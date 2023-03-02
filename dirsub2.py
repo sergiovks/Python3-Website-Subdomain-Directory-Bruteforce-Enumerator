@@ -2,7 +2,7 @@ import argparse
 import requests
 from termcolor import colored
 from concurrent.futures import ThreadPoolExecutor
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 from tqdm import tqdm
 import sys
 
@@ -58,32 +58,44 @@ if not wordlist:
     sys.exit()
 
 if args.subdomains:
-    target = urlparse(args.url).netloc
-    subdomains = [f"{sub}.{target}" for sub in wordlist]
-    wordlist = subdomains
+    scan_subdomains(args.url)
+    sys.exit()
 
-def scan_path(path):
-    if args.add_slash:
-        path = path.strip() + "/"
-    else:
-        path = path.strip()
-    full_url = url + "/" + path
-    try:
-        response = requests.get(full_url, timeout 5)
-        status_code = response.status_code
-        if status_code >= 200 and status_code < 300:
-            print(colored(full_url + " [{}]".format(status_code), 'green'))
-        elif status_code >= 300 and status_code < 400:
-            print(colored(full_url + " [{}]".format(status_code), 'blue'))
-        elif status_code >= 400 and status_code < 500:
-            print(colored(full_url + " [{}]".format(status_code), 'red'))
-        elif status_code >= 500:
-            print(colored(full_url + " [{}]".format(status_code), 'yellow'))
-    except requests.exceptions.Timeout:
-        print(colored(full_url + " [Error]: Connection timeout", 'magenta'))
-    except requests.exceptions.RequestException as e:
-        print(colored(full_url + " [Error]: {}".format(e), 'magenta'))
-    pbar.update(1)
+def scan_subdomains(url):
+    target = urlparse(url).netloc
+    for subdomain in wordlist:
+        subdomain_url = f"{subdomain}.{target}"
+        try:
+            response = requests.get(f"http://{subdomain_url}", timeout=5)
+            if response.status_code < 400:
+                print(colored(f"[*] Discovered subdomain: {subdomain_url}", "green"))
+                scan_subdomains(subdomain_url)
+        except:
+            pass
+    
+def scan_paths(url):
+    for line in wordlist:
+        if args.add_slash:
+            path = line.strip() + "/"
+        else:
+            path = line.strip()
+        full_url = urljoin(url, path)
+        try:
+            response = requests.get(full_url, timeout=5)
+            status_code = response.status_code
+            if status_code >= 200 and status_code < 300:
+                print(colored(full_url + " [{}]".format(status_code), 'green'))
+            elif status_code >= 300 and status_code < 400:
+                print(colored(full_url + " [{}]".format(status_code), 'blue'))
+            elif status_code >= 400 and status_code < 500:
+                print(colored(full_url + " [{}]".format(status_code), 'red'))
+            elif status_code >= 500:
+                print(colored(full_url + " [{}]".format(status_code), 'yellow'))
+        except requests.exceptions.Timeout:
+            print(colored(full_url + " [Error]: Connection timeout", 'magenta'))
+        except requests.exceptions.RequestException as e:
+            print(colored(full_url + " [Error]: {}".format(e), 'magenta'))
+        pbar.update(1)
 
 with ThreadPoolExecutor(max_workers=num_threads) as executor:
     futures = []
