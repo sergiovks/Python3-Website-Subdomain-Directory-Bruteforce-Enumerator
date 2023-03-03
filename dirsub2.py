@@ -8,10 +8,10 @@ import sys
 
 def banners():
     print("""
-    *********************************************
-        SNMP Enumeration Tool
+    ************************************************
+        Web: Directory Subdomain Bruteforce Tool
         Author: sergiovks
-    *********************************************
+    ************************************************
     """)
 banners
 
