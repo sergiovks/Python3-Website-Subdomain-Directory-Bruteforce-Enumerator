@@ -6,6 +6,15 @@ from urllib.parse import urlparse, urljoin
 from tqdm import tqdm
 import sys
 
+def banners():
+    print("""
+    *********************************************
+        SNMP Enumeration Tool
+        Author: sergiovks
+    *********************************************
+    """)
+banners
+
 parser = argparse.ArgumentParser(description='Directory/Subdomain enumeration on a website')
 parser.add_argument('-w', '--wordlist', metavar='', required=True, help='Path to the wordlist to use')
 parser.add_argument('-t', '--threads', metavar='', type=int, default=10, choices=range(1, 1001), help='Number of threads to use (default: 10)')
